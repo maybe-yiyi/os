@@ -13,14 +13,6 @@
 #error "This needs to be compiled with a ix86-elf compiler"
 #endif
 
-size_t strlen(const char* str)
-{
-  size_t len = 0;
-  while (str[len++]);
-  return len;
-}
-
-
 void kernel_main(void)
 {
   /* initalize terminal interface*/
