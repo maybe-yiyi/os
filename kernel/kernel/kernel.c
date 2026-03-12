@@ -4,8 +4,8 @@
 
 void kernel_main(void)
 {
-  /* initalize terminal interface*/
-  terminal_initialize();
+	/* initalize terminal interface*/
+	terminal_initialize();
 
-  terminal_writestring("Hello, kernel World!\nWelcome to Yinux!\n");
+	terminal_writestring("Hello, kernel World!\nWelcome to Yinux!\n");
 }
