@@ -46,8 +46,8 @@
                      SEG_PRIV(3)     | SEG_DATA_RDWR
 
 struct gdt_pointer {
-	uint32_t offset;
 	uint16_t size;
+	uint32_t offset;
 } __attribute__ ((packed));
 
 static inline void lgdt(struct gdt_pointer *gdtr) {
