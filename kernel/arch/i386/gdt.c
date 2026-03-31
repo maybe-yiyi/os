@@ -47,10 +47,10 @@
 
 struct gdt_pointer {
 	uint32_t offset;
-	uint32_t size;
+	uint16_t size;
 } __attribute__ ((packed));
 
-static inline void lgdt(struct gdt_pointer gdtr) {
+static inline void lgdt(struct gdt_pointer *gdtr) {
 	__asm__ __volatile__ ("lgdt %0" : : "m" (gdtr));
 }
 
@@ -86,7 +86,7 @@ void initialize_gdt() {
 	struct gdt_pointer gdtr;
 
 	gdtr.size = (sizeof(uint64_t) * 5) - 1;
-	gdtr.offset = (uint32_t)gdt;
+	gdtr.offset = (uint32_t)&gdt;
 
-	lgdt(gdtr);
+	lgdt(&gdtr);
 }
