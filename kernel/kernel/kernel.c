@@ -6,10 +6,9 @@
 
 void kernel_main(void)
 {
-	/* create gdt table */
-	initialize_gdt();
+	terminal_initialize();
 
-	/* create idt */
+	initialize_gdt();
 	idt_init();
 
 	/* initalize terminal interface*/

@@ -48,12 +48,15 @@ ISR_NOERRCODE 29
 ISR_ERRCODE 30
 ISR_NOERRCODE 31
 
-.extern exception_handler
+.extern isr_handler
 isr_common_stub:
     pusha
+    push %esp
 
-    call exception_handler
+    cld
+    call isr_handler
 
+    addl $4, %esp
     popa
     addl $8, %esp
     iret

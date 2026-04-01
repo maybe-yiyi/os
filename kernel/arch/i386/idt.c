@@ -1,6 +1,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#include <kernel/tty.h>
+
 #include <kernel/idt.h>
 
 extern void* isr_stub_table[];
@@ -22,9 +24,30 @@ struct idt_pointer {
 
 struct idt_pointer idtr;
 
-void exception_handler(void);
-void exception_handler() {
-	__asm__ __volatile__ ("cli; hlt");
+struct registers {
+	uint32_t edi, esi, ebp, esp, ebx, edx, ecx, eax; // Pushed by pusha
+	uint32_t int_no;   // Interrupt number
+	uint32_t err_code; // Error code (or dummy 0)
+	uint32_t eip, cs, eflags, useresp, ss; // Pushed by the CPU automatically
+};
+
+void isr_handler(struct registers *regs);
+void isr_handler(struct registers *regs) {
+	switch (regs->int_no) {
+	case 8:
+		terminal_writestring("timer tick fired\n");
+		break;
+	case 13:
+		terminal_writestring("gpf\n");
+		break;
+	case 14:
+		terminal_writestring("page fault\n");
+		break;
+	default:
+		terminal_writestring("unhandled exception\n");
+		__asm__ __volatile__ ("cli; hlt");
+		break;
+	}
 }
 
 void idt_set_descriptor(uint8_t vector, void* isr, uint8_t flags);
