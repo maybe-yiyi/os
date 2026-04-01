@@ -4,6 +4,6 @@
 #include <stdio.h>
 #include <stdint.h>
 
-void initialize_gdt();
+void gdt_init();
 
 #endif

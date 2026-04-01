@@ -8,11 +8,8 @@ void kernel_main(void)
 {
 	terminal_initialize();
 
-	initialize_gdt();
+	gdt_init();
 	idt_init();
 
-	/* initalize terminal interface*/
-	terminal_initialize();
-
-	terminal_writestring("Hello, kernel World!\nWelcome to Yinux!\n");
+	terminal_writestring("Hello, kernel World!\n");
 }
