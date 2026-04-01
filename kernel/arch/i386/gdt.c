@@ -50,9 +50,7 @@ struct gdt_pointer {
 	uint32_t offset;
 } __attribute__ ((packed));
 
-static inline void lgdt(struct gdt_pointer *gdtr) {
-	__asm__ __volatile__ ("lgdt %0" : : "m" (gdtr));
-}
+struct gdt_pointer gdtr;
 
 // TODO: enforce that limit is not greater than 0x000FFFFF
 uint64_t create_descriptor(uint32_t base, uint32_t limit, uint16_t flag) {
@@ -83,10 +81,8 @@ void initialize_gdt() {
 	gdt[3] = create_descriptor(0, 0x000FFFFF, (GDT_CODE_PL3));
 	gdt[4] = create_descriptor(0, 0x000FFFFF, (GDT_DATA_PL3));
 
-	struct gdt_pointer gdtr;
-
 	gdtr.size = (sizeof(uint64_t) * 5) - 1;
 	gdtr.offset = (uint32_t)&gdt;
 
-	lgdt(&gdtr);
+	__asm__ __volatile__ ("lgdt %0" : : "m" (gdtr));
 }
