@@ -48,7 +48,7 @@ ISR_NOERRCODE 29
 ISR_ERRCODE 30
 ISR_NOERRCODE 31
 
-.extern isr_handler
+.extern exception_handler
 isr_common_stub:
     pusha
 
