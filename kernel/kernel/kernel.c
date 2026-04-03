@@ -3,6 +3,7 @@
 #include <kernel/gdt.h>
 #include <kernel/tty.h>
 #include <kernel/idt.h>
+#include <kernel/apic.h>
 
 void kernel_main(void)
 {
@@ -10,6 +11,8 @@ void kernel_main(void)
 
 	gdt_init();
 	idt_init();
+
+	enable_apic();
 
 	terminal_writestring("Hello, kernel World!\n");
 }
