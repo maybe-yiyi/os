@@ -74,6 +74,7 @@ uint64_t create_descriptor(uint32_t base, uint32_t limit, uint16_t flag) {
 
 uint64_t gdt[5];
 
+extern void gdt_flush();
 void gdt_init() {
 	gdt[0] = create_descriptor(0, 0, 0);
 	gdt[1] = create_descriptor(0, 0x000FFFFF, (GDT_CODE_PL0));
@@ -84,5 +85,6 @@ void gdt_init() {
 	gdtr.size = (sizeof(uint64_t) * 5) - 1;
 	gdtr.offset = (uint32_t)&gdt;
 
-	__asm__ __volatile__ ("lgdt %0" : : "m" (gdtr));
+	// __asm__ __volatile__ ("lgdt %0" : : "m" (gdtr));
+	gdt_flush(&gdtr);
 }
