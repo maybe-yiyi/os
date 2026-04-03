@@ -5,8 +5,6 @@
 
 #include <kernel/idt.h>
 
-extern void* isr_stub_table[];
-
 struct idt_entry {
 	uint16_t isr_low;
 	uint16_t kernel_cs;
@@ -39,14 +37,26 @@ void isr_handler(struct registers *regs) {
 		break;
 	case 13:
 		terminal_writestring("gpf\n");
+		__asm__ __volatile__ ("cli; hlt");
 		break;
 	case 14:
 		terminal_writestring("page fault\n");
+		break;
+	case 33:
+		uint8_t scancode;
+		__asm__ __volatile__ ("inb %%dx" : "=a" (scancode) : "d" (0x60));
+		terminal_putchar(scancode);
 		break;
 	default:
 		terminal_writestring("unhandled exception\n");
 		__asm__ __volatile__ ("cli; hlt");
 		break;
+	}
+
+	if (regs->int_no >= 32) {
+		// send EOI
+		uint32_t* local_apic_eoi = (uint32_t*) 0xFEE000B0;
+		*local_apic_eoi = 0;
 	}
 }
 
@@ -61,7 +71,7 @@ void idt_set_descriptor(uint8_t vector, void* isr, uint8_t flags) {
 	descriptor->reserved	= 0;
 }
 
-# define IDT_MAX_DESCRIPTORS 32
+#define IDT_MAX_DESCRIPTORS 34
 bool vectors[IDT_MAX_DESCRIPTORS];
 
 extern void *isr_stub_table[];

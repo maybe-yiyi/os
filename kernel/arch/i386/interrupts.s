@@ -1,6 +1,7 @@
 .macro ISR_NOERRCODE vector
 .global isr\vector
 isr\vector:
+    cli
     pushl $0
     pushl $\vector
     jmp isr_common_stub
@@ -9,6 +10,7 @@ isr\vector:
 .macro ISR_ERRCODE vector
 .global isr\vector
 isr\vector:
+    cli
     pushl $\vector
     jmp isr_common_stub
 .endm
@@ -47,17 +49,19 @@ ISR_NOERRCODE 28
 ISR_NOERRCODE 29
 ISR_ERRCODE 30
 ISR_NOERRCODE 31
+ISR_NOERRCODE 32
+ISR_NOERRCODE 33
 
 .extern isr_handler
 isr_common_stub:
-    pusha
+    pushal
     push %esp
 
     cld
     call isr_handler
 
     addl $4, %esp
-    popa
+    popal
     addl $8, %esp
     iret
 
@@ -97,3 +101,5 @@ isr_stub_table:
     .long isr29
     .long isr30
     .long isr31
+    .long isr32
+    .long isr33
