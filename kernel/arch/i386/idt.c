@@ -29,7 +29,6 @@ struct registers {
 	uint32_t eip, cs, eflags, useresp, ss; // Pushed by the CPU automatically
 };
 
-void isr_handler(struct registers *regs);
 void isr_handler(struct registers *regs) {
 	switch (regs->int_no) {
 	case 8:
@@ -60,7 +59,6 @@ void isr_handler(struct registers *regs) {
 	}
 }
 
-void idt_set_descriptor(uint8_t vector, void* isr, uint8_t flags);
 void idt_set_descriptor(uint8_t vector, void* isr, uint8_t flags) {
 	struct idt_entry* descriptor = &idt[vector];
 
@@ -76,7 +74,6 @@ bool vectors[IDT_MAX_DESCRIPTORS];
 
 extern void *isr_stub_table[];
 
-void idt_init(void);
 void idt_init() {
 	idtr.size = (uint16_t)sizeof(struct idt_entry) * IDT_MAX_DESCRIPTORS - 1;
 	idtr.offset = (uintptr_t)&idt;
