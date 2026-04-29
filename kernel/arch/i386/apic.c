@@ -5,7 +5,7 @@
 
 #include <kernel/apic.h>
 
-#define CPUID_FEAT_EDX_APIC 1 << 9
+#define CPUID_FEAT_EDX_APIC (1 << 9)
 #define MSR_APIC_REGISTER_ADDRESS 0x1B
 #define APIC_BASE_ADDRESS_MASK 0xFFFFF000
 
@@ -13,9 +13,14 @@ uint32_t APIC_BASE_ADDRESS;
 #define SPURIOUS_IVR_OFFSET 0xF0
 #define DIVIDE_CONFIG_REG_OFFSET 0x3E0
 #define INITIAL_COUNT_REG_OFFSET 0x380
-#define LAPIC_TIMER_MODES_OFFSET 0x320
+#define LAPIC_TIMER_REG_OFFSET 0x320
+#define LAPIC(off) (*(volatile uint32_t *)(uintptr_t)(IOAPIC_BASE_ADDRESS + (off)))
 
 #define IOAPIC_BASE_ADDRESS 0xFEC00000 // TODO: find this at runtime through ACPI/MADT tables
+static inline void write_IOAPIC(uint32_t index, uint32_t data) {
+	*(uintptr_t *)(IOAPIC_BASE_ADDRESS + 0) = index;
+	*(uintptr_t *)(IOAPIC_BASE_ADDRESS + 0x10) = data;
+}
 
 bool check_apic() {
 	uint32_t eax, edx;
@@ -43,23 +48,20 @@ void disable_pic() {
 // redirects IRQ1 to interrupt vector 33
 void redirect_keyboard() {
 	// upper dword
-	*(uintptr_t *)(IOAPIC_BASE_ADDRESS | 0) = 0x13;
-	*(uintptr_t *)(IOAPIC_BASE_ADDRESS | 0x10) = 0;
-
+	write_IOAPIC(0x13, 0);
 	// lower dword
-	*(uintptr_t *)(IOAPIC_BASE_ADDRESS | 0) = 0x12;
-	*(uintptr_t *)(IOAPIC_BASE_ADDRESS | 0x10) = 0x21;
+	write_IOAPIC(0x12, 0x21);
 }
 
 void timer_init() {
 	// set divide to 16
-	*(uint32_t *)(APIC_BASE_ADDRESS | DIVIDE_CONFIG_REG_OFFSET) = 0x3;
+	LAPIC(DIVIDE_CONFIG_REG_OFFSET) = 0x3;
 
 	// LVT timer, sets to interrupt vector 32 and periodic mode
-	*(uint32_t *)(APIC_BASE_ADDRESS | LAPIC_TIMER_MODES_OFFSET) = 0x20 | 1 << 17;
+	LAPIC(LAPIC_TIMER_REG_OFFSET) = 0x20 | 1 << 17;
 
 	// set initial ticks to 10000
-	*(uint32_t *)(APIC_BASE_ADDRESS | INITIAL_COUNT_REG_OFFSET) = 10000;
+	LAPIC(INITIAL_COUNT_REG_OFFSET) = 10000;
 }
 
 void enable_apic() {
