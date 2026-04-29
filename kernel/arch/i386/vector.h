@@ -3,6 +3,7 @@
 
 #define EXCEPTION_DOUBLE_FAULT	8
 #define EXCEPTION_PAGE_FAULT	14
+#define VECTOR_TIMER		32
 #define VECTOR_KEYBOARD		33
 
 #endif

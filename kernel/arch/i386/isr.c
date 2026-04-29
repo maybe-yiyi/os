@@ -15,17 +15,18 @@ struct registers {
 void isr_handler(struct registers *regs) {
 	switch (regs->int_no) {
 	case EXCEPTION_DOUBLE_FAULT: {
-		printf("df\n");
+		printf("df err=%u\n", regs->err_code);
 		__asm__ __volatile__ ("cli; hlt");
 		break;
 	}
 	case EXCEPTION_PAGE_FAULT: {
 		uint32_t cr2;
 		__asm__ __volatile__ ("mov %%cr2, %%eax" : "=a"(cr2) : );
-		// TODO: implement %lu, %x for printf
-		// printf("pf err=%lu cr2=%x\n", cr2);
-		printf("pf\n");
+		printf("pf err=%u cr2=%x\n", regs->err_code, cr2);
 		__asm__ __volatile__ ("cli; hlt");
+		break;
+	}
+	case VECTOR_TIMER: {
 		break;
 	}
 	case VECTOR_KEYBOARD: {
