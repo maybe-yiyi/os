@@ -1,6 +1,5 @@
 #include <stdint.h>
 #include <stdbool.h>
-#include <stdio.h>
 
 #include <kernel/idt.h>
 
@@ -21,48 +20,6 @@ struct idt_pointer {
 
 struct idt_pointer idtr;
 
-struct registers {
-	uint32_t edi, esi, ebp, esp, ebx, edx, ecx, eax; // Pushed by pusha
-	uint32_t int_no;   // Interrupt number
-	uint32_t err_code; // Error code (or dummy 0)
-	uint32_t eip, cs, eflags, useresp, ss; // Pushed by the CPU automatically
-};
-
-void isr_handler(struct registers *regs) {
-	switch (regs->int_no) {
-	case 8: {
-		printf("timer tick fired\n");
-		break;
-	}
-	case 13: {
-		printf("gpf\n");
-		__asm__ __volatile__ ("cli; hlt");
-		break;
-	}
-	case 14: {
-		printf("page fault\n");
-		break;
-	}
-	case 33: {
-		uint8_t scancode;
-		__asm__ __volatile__ ("inb %%dx" : "=a" (scancode) : "d" (0x60));
-		putchar(scancode);
-		break;
-	}
-	default: {
-		printf("unhandled exception\n");
-		__asm__ __volatile__ ("cli; hlt");
-		break;
-	}
-	}
-
-	if (regs->int_no >= 32) {
-		// send EOI
-		uint32_t* local_apic_eoi = (uint32_t*) 0xFEE000B0;
-		*local_apic_eoi = 0;
-	}
-}
-
 void idt_set_descriptor(uint8_t vector, void* isr, uint8_t flags) {
 	struct idt_entry* descriptor = &idt[vector];
 
@@ -74,7 +31,6 @@ void idt_set_descriptor(uint8_t vector, void* isr, uint8_t flags) {
 }
 
 #define IDT_MAX_DESCRIPTORS 34
-bool vectors[IDT_MAX_DESCRIPTORS];
 
 extern void *isr_stub_table[];
 
@@ -84,7 +40,6 @@ void idt_init() {
 
 	for (uint8_t vector = 0; vector < IDT_MAX_DESCRIPTORS; vector++) {
 		idt_set_descriptor(vector, isr_stub_table[vector], 0x8E);
-		vectors[vector] = true;
 	}
 
 	__asm__ __volatile__ ("lidt %0" : : "m" (idtr));
