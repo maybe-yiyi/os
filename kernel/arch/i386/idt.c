@@ -2,8 +2,6 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-#include <kernel/tty.h>
-
 #include <kernel/idt.h>
 
 struct idt_entry {
@@ -32,25 +30,30 @@ struct registers {
 
 void isr_handler(struct registers *regs) {
 	switch (regs->int_no) {
-	case 8:
+	case 8: {
 		printf("timer tick fired\n");
 		break;
-	case 13:
+	}
+	case 13: {
 		printf("gpf\n");
 		__asm__ __volatile__ ("cli; hlt");
 		break;
-	case 14:
+	}
+	case 14: {
 		printf("page fault\n");
 		break;
-	case 33:
+	}
+	case 33: {
 		uint8_t scancode;
 		__asm__ __volatile__ ("inb %%dx" : "=a" (scancode) : "d" (0x60));
 		putchar(scancode);
 		break;
-	default:
+	}
+	default: {
 		printf("unhandled exception\n");
 		__asm__ __volatile__ ("cli; hlt");
 		break;
+	}
 	}
 
 	if (regs->int_no >= 32) {
