@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <stdbool.h>
+#include <stdio.h>
 
 #include <kernel/tty.h>
 
@@ -32,22 +33,22 @@ struct registers {
 void isr_handler(struct registers *regs) {
 	switch (regs->int_no) {
 	case 8:
-		terminal_writestring("timer tick fired\n");
+		printf("timer tick fired\n");
 		break;
 	case 13:
-		terminal_writestring("gpf\n");
+		printf("gpf\n");
 		__asm__ __volatile__ ("cli; hlt");
 		break;
 	case 14:
-		terminal_writestring("page fault\n");
+		printf("page fault\n");
 		break;
 	case 33:
 		uint8_t scancode;
 		__asm__ __volatile__ ("inb %%dx" : "=a" (scancode) : "d" (0x60));
-		terminal_putchar(scancode);
+		putchar(scancode);
 		break;
 	default:
-		terminal_writestring("unhandled exception\n");
+		printf("unhandled exception\n");
 		__asm__ __volatile__ ("cli; hlt");
 		break;
 	}

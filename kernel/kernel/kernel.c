@@ -14,5 +14,5 @@ void kernel_main(void)
 
 	enable_apic();
 
-	terminal_writestring("Hello, kernel World!\n");
+	printf("Hello, kernel World!\n");
 }
