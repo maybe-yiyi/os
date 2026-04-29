@@ -12,7 +12,7 @@ static const size_t VGA_HEIGHT = 25;
 static uint16_t* const VGA_MEMORY = (uint16_t*) 0xB8000;
 
 void set_cursor_pos(size_t terminal_row, size_t terminal_column) {
-	size_t pos = terminal_row * 80 + terminal_column;
+	size_t pos = terminal_row * VGA_WIDTH + terminal_column;
 	__asm__ __volatile__ ("outb %%al, %%dx" : : "a"(0x0E), "d"(0x3D4));
 	__asm__ __volatile__ ("outb %%al, %%dx" : : "a"((pos >> 8) & 0xFF), "d"(0x3D5));
 	__asm__ __volatile__ ("outb %%al, %%dx" : : "a"(0x0F), "d"(0x3D4));
