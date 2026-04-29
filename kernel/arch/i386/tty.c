@@ -62,8 +62,10 @@ void increment_row()
 
 void increment_column()
 {
-	if (++terminal_column == VGA_WIDTH)
+	if (++terminal_column == VGA_WIDTH) {
 		increment_row();
+		terminal_column = 0;
+	}
 }
 
 void terminal_putchar(char c)
