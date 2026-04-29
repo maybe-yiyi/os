@@ -43,7 +43,7 @@ void isr_handler(struct registers *regs) {
 
 	if (regs->int_no >= 32) {
 		// send EOI
-		uint32_t* local_apic_eoi = (uint32_t*) (APIC_BASE_ADDRESS | 0xB0);
+		uint32_t* local_apic_eoi = (uint32_t*) (APIC_BASE_ADDRESS + 0xB0);
 		*local_apic_eoi = 0;
 	}
 }

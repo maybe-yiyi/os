@@ -5,6 +5,8 @@
 
 #include <kernel/apic.h>
 
+#include "vector.h"
+
 #define CPUID_FEAT_EDX_APIC (1 << 9)
 #define MSR_APIC_REGISTER_ADDRESS 0x1B
 #define APIC_BASE_ADDRESS_MASK 0xFFFFF000
@@ -58,7 +60,7 @@ void timer_init() {
 	LAPIC(DIVIDE_CONFIG_REG_OFFSET) = 0x3;
 
 	// LVT timer, sets to interrupt vector 32 and periodic mode
-	LAPIC(LAPIC_TIMER_REG_OFFSET) = 0x20 | 1 << 17;
+	LAPIC(LAPIC_TIMER_REG_OFFSET) = VECTOR_TIMER | (1 << 17);
 
 	// set initial ticks to 10000
 	LAPIC(INITIAL_COUNT_REG_OFFSET) = 10000;
