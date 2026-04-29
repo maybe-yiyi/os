@@ -12,6 +12,20 @@ static bool print(const char* data, size_t length) {
 	return true;
 }
 
+char* number(char *buf, unsigned int num, unsigned int base) {
+	static const char __attribute__((nonstring)) digits[16] = "0123456789abcdef";
+
+	size_t i = sizeof(buf) - 1;
+	buf[i] = '\0';
+
+	do {
+		buf[--i] = digits[num % base];
+		num /= base;
+	} while (num != 0);
+
+	return buf + i;
+}
+
 int printf(const char* restrict format, ...) {
 	va_list parameters;
 	va_start(parameters, format);
@@ -50,6 +64,19 @@ int printf(const char* restrict format, ...) {
 			if (!print(&c, sizeof(c)))
 				return -1;
 			written++;
+		} else if (*format == 'x') {
+			format++;
+			unsigned int num = va_arg(parameters, unsigned int);
+			char buf[sizeof(num) * 2 + 1];
+			char *str = number(buf, num, 16);
+			size_t len = strlen(str);
+			if (maxrem < len) {
+				// TODO: Set errno to EOVERFLOW.
+				return -1;
+			}
+			if (!print(str, len))
+				return -1;
+			written += len;
 		} else if (*format == 's') {
 			format++;
 			const char* str = va_arg(parameters, const char*);
