@@ -73,6 +73,12 @@ void terminal_putchar(char c)
 	if (c == '\n') {
 		terminal_column = 0;
 		increment_row();
+	} else if (c == '\b') {
+		if (terminal_column != 0) {
+			terminal_column--;
+			terminal_putentryat(' ', terminal_color, terminal_column, terminal_row);
+		}
+	} else if (c == '\t') {
 	} else {
 		terminal_putentryat(c, terminal_color, terminal_column, terminal_row);
 		increment_column();
