@@ -1,10 +1,10 @@
 #include <stdio.h>
 
-#include <kernel/gdt.h>
-#include <kernel/tty.h>
-#include <kernel/idt.h>
 #include <kernel/apic.h>
+#include <kernel/gdt.h>
+#include <kernel/idt.h>
 #include <kernel/kbd.h>
+#include <kernel/tty.h>
 
 void kernel_main(void)
 {

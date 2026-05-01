@@ -1,0 +1,12 @@
+# Kernel-ish C style for this OSDev tree (tabs, 8-space width, Linux brace rules).
+BasedOnStyle: LLVM
+Language: Cpp
+IndentWidth: 8
+TabWidth: 8
+UseTab: Always
+ColumnLimit: 80
+BreakBeforeBraces: Linux
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortFunctionsOnASingleLine: None
+PointerAlignment: Right
+AlignAfterOpenBracket: Align

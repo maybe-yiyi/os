@@ -1,19 +1,22 @@
 #include <limits.h>
-#include <stdbool.h>
 #include <stdarg.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
 
-static bool print(const char* data, size_t length) {
-	const unsigned char* bytes = (const unsigned char*) data;
+static bool print(const char *data, size_t length)
+{
+	const unsigned char *bytes = (const unsigned char *)data;
 	for (size_t i = 0; i < length; i++)
 		if (putchar(bytes[i]) == EOF)
 			return false;
 	return true;
 }
 
-char* number(char *buf, unsigned int num, unsigned int base) {
-	static const char __attribute__((nonstring)) digits[16] = "0123456789abcdef";
+char *number(char *buf, unsigned int num, unsigned int base)
+{
+	static const char __attribute__((nonstring)) digits[16] =
+	    "0123456789abcdef";
 
 	size_t i = sizeof(buf) - 1;
 	buf[i] = '\0';
@@ -26,7 +29,8 @@ char* number(char *buf, unsigned int num, unsigned int base) {
 	return buf + i;
 }
 
-int printf(const char* restrict format, ...) {
+int printf(const char *restrict format, ...)
+{
 	va_list parameters;
 	va_start(parameters, format);
 
@@ -52,11 +56,12 @@ int printf(const char* restrict format, ...) {
 			continue;
 		}
 
-		const char* format_begun_at = format++;
+		const char *format_begun_at = format++;
 
 		if (*format == 'c') {
 			format++;
-			char c = (char) va_arg(parameters, int /* char promotes to int */);
+			char c = (char)va_arg(parameters,
+					      int /* char promotes to int */);
 			if (!maxrem) {
 				// TODO: Set errno to EOVERFLOW.
 				return -1;
@@ -92,7 +97,7 @@ int printf(const char* restrict format, ...) {
 			written += len;
 		} else if (*format == 's') {
 			format++;
-			const char* str = va_arg(parameters, const char*);
+			const char *str = va_arg(parameters, const char *);
 			size_t len = strlen(str);
 			if (maxrem < len) {
 				// TODO: Set errno to EOVERFLOW.
