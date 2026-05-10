@@ -3,6 +3,7 @@
 
 #include <kernel/apic.h>
 #include <kernel/kbd.h>
+#include <kernel/panic.h>
 
 #include "vector.h"
 
@@ -18,15 +19,13 @@ void isr_handler(struct registers *regs)
 {
 	switch (regs->int_no) {
 	case EXCEPTION_DOUBLE_FAULT: {
-		printf("df err=%u\n", regs->err_code);
-		__asm__ __volatile__("cli; hlt");
+		kernel_panicf("df err=%u\n", regs->err_code);
 		break;
 	}
 	case EXCEPTION_PAGE_FAULT: {
 		uint32_t cr2;
 		__asm__ __volatile__("mov %%cr2, %%eax" : "=a"(cr2) :);
-		printf("pf err=%u cr2=%x\n", regs->err_code, cr2);
-		__asm__ __volatile__("cli; hlt");
+		kernel_panicf("pf err=%u cr2=%x\n", regs->err_code, cr2);
 		break;
 	}
 	case VECTOR_TIMER: {
@@ -37,8 +36,7 @@ void isr_handler(struct registers *regs)
 		break;
 	}
 	default: {
-		printf("unhandled exception\n");
-		__asm__ __volatile__("cli; hlt");
+		kernel_panic("unhandled exception\n");
 		break;
 	}
 	}
