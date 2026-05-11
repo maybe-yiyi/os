@@ -27,7 +27,7 @@ static inline void write_IOAPIC(uint32_t index, uint32_t data)
 	*(uintptr_t *)(IOAPIC_BASE_ADDRESS + 0x10) = data;
 }
 
-bool check_apic()
+bool check_apic(void)
 {
 	uint32_t eax, edx;
 	__asm__ __volatile__("cpuid"
@@ -37,7 +37,7 @@ bool check_apic()
 	return edx & CPUID_FEAT_EDX_APIC;
 }
 
-void enable_local_apic()
+void enable_local_apic(void)
 {
 	uint32_t eax, edx;
 	// find apic msr location
@@ -52,14 +52,14 @@ void enable_local_apic()
 	*(uint32_t *)(APIC_BASE_ADDRESS | SPURIOUS_IVR_OFFSET) = 0x100 | 0xFF;
 }
 
-void disable_pic()
+void disable_pic(void)
 {
 	__asm__ __volatile__("outb %%al, %%dx" : : "a"(0xFF), "d"(0x21));
 	__asm__ __volatile__("outb %%al, %%dx" : : "a"(0xFF), "d"(0xA1));
 }
 
 // redirects IRQ1 to interrupt vector 33
-void redirect_keyboard()
+void redirect_keyboard(void)
 {
 	// upper dword
 	write_IOAPIC(0x13, 0);
@@ -67,7 +67,7 @@ void redirect_keyboard()
 	write_IOAPIC(0x12, 0x21);
 }
 
-void timer_init()
+void timer_init(void)
 {
 	// set divide to 16
 	LAPIC(DIVIDE_CONFIG_REG_OFFSET) = 0x3;
@@ -79,7 +79,7 @@ void timer_init()
 	LAPIC(INITIAL_COUNT_REG_OFFSET) = 10000;
 }
 
-void enable_apic()
+void enable_apic(void)
 {
 	// should probably do something with this
 	if (!check_apic()) {

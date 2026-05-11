@@ -35,7 +35,7 @@ void idt_set_descriptor(uint8_t vector, void *isr, uint8_t flags)
 
 extern void *isr_stub_table[];
 
-void idt_init()
+void idt_init(void)
 {
 	idtr.size =
 	    (uint16_t)sizeof(struct idt_entry) * IDT_MAX_DESCRIPTORS - 1;

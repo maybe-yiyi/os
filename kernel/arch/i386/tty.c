@@ -53,7 +53,7 @@ void terminal_putentryat(char c, uint8_t color, size_t x, size_t y)
 	terminal_buffer[index] = vga_entry(c, color);
 }
 
-void increment_row()
+void increment_row(void)
 {
 	if (++terminal_row == VGA_HEIGHT) {
 		for (size_t y = 0; y < VGA_HEIGHT - 1; y++) {
@@ -72,7 +72,7 @@ void increment_row()
 	}
 }
 
-void increment_column()
+void increment_column(void)
 {
 	if (++terminal_column == VGA_WIDTH) {
 		increment_row();
@@ -104,13 +104,13 @@ void terminal_putchar(char c)
 	set_cursor_pos(terminal_row, terminal_column);
 }
 
-void terminal_write(const char *data, size_t size)
+void terminal_write(const char *restrict data, size_t size)
 {
 	for (size_t i = 0; i < size; i++)
 		terminal_putchar(data[i]);
 }
 
-void terminal_writestring(const char *data)
+void terminal_writestring(const char *restrict data)
 {
 	terminal_write(data, strlen(data));
 }

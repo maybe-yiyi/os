@@ -77,8 +77,8 @@ uint64_t create_descriptor(uint32_t base, uint32_t limit, uint16_t flag)
 
 uint64_t gdt[5];
 
-extern void gdt_flush();
-void gdt_init()
+extern void gdt_flush(struct gdt_pointer *gdtr_ptr);
+void gdt_init(void)
 {
 	gdt[0] = create_descriptor(0, 0, 0);
 	gdt[1] = create_descriptor(0, 0x000FFFFF, (GDT_CODE_PL0));

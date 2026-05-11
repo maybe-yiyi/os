@@ -39,7 +39,7 @@ static bool ctrl_pressed = false;
 static bool alt_pressed = false;
 static bool caps_lock = false;
 
-static uint8_t kbd_read_status()
+static uint8_t kbd_read_status(void)
 {
 	uint8_t status;
 	__asm__ __volatile__("inb %1, %0"
@@ -48,7 +48,7 @@ static uint8_t kbd_read_status()
 	return status;
 }
 
-static uint8_t kbd_read_data()
+static uint8_t kbd_read_data(void)
 {
 	uint8_t data;
 	__asm__ __volatile__("inb %1, %0"
@@ -57,7 +57,7 @@ static uint8_t kbd_read_data()
 	return data;
 }
 
-static void kbd_wait()
+static void kbd_wait(void)
 {
 	while (kbd_read_status() & 0x02)
 		;
@@ -80,7 +80,7 @@ static void kbd_buffer_put(char c)
 	}
 }
 
-void kbd()
+void kbd(void)
 {
 	uint8_t scancode = kbd_read_data();
 
@@ -148,7 +148,7 @@ void kbd()
 	}
 }
 
-void kbd_init()
+void kbd_init(void)
 {
 	buffer_head = 0;
 	shift_pressed = false;
@@ -165,12 +165,12 @@ void kbd_init()
 	kbd_send_command(0xAE);
 }
 
-bool kbd_has_key()
+bool kbd_has_key(void)
 {
 	return buffer_head != buffer_tail;
 }
 
-char kbd_getchar()
+char kbd_getchar(void)
 {
 	while (buffer_head == buffer_tail) {
 		// Wait for key
